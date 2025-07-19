@@ -7,6 +7,7 @@
 #include <random>
 #include <string>
 #include <mmsystem.h>
+#include <vector>
 #pragma comment(lib, "Winmm.lib")
 
 using namespace std;
@@ -20,19 +21,8 @@ struct node
     node<T>* nextNode;
     node<T>* previousNode;
 
-    node()
-    {
-        data = T();
-        nextNode = nullptr;
-        previousNode = nullptr;
-    }
-
-    node(T val)
-    {
-        data = val;
-        nextNode = nullptr;
-        previousNode = nullptr;
-    }
+    node() : data(T()), nextNode(nullptr), previousNode(nullptr) {}
+    node(T val) : data(val), nextNode(nullptr), previousNode(nullptr) {}
 };
 
 template <typename T>
@@ -41,77 +31,57 @@ class doublyLinked
     node<T>* tail, * head;
     int length;
 
-    public:
-    doublyLinked()
-    {
-        tail = nullptr;
-        head = nullptr;
-        length = 0;
-    }
+public:
+    doublyLinked() : tail(nullptr), head(nullptr), length(0) {}
 
-    doublyLinked(doublyLinked& dl)
+    doublyLinked(const doublyLinked& dl) : tail(nullptr), head(nullptr), length(0)
     {
-        head = nullptr;
-
         node<T>* temp = dl.head;
         while (temp)
         {
             insertAtEnd(temp->data);
             temp = temp->nextNode;
         }
-
-        length = dl.length;
     }
 
-    node<T>* getHead()
-    {
-        return head;
-    }
-
-    node<T>* getTail()
-    {
-        return tail;
-    }
+    node<T>* getHead() const { return head; }
+    node<T>* getTail() const { return tail; }
+    int getLength() const { return length; }
 
     void insertAtStart(T val)
     {
         node<T>* newNode = new node<T>(val);
         if (isEmpty())
         {
-            head = newNode;
-            tail = newNode;
-            length++;
-            return;
+            head = tail = newNode;
         }
         else
         {
             newNode->nextNode = head;
             head->previousNode = newNode;
             head = newNode;
-            length++;
         }
+        length++;
     }
 
     void insertAtEnd(T val)
     {
-        node<T>* newNode = new node<T>(val);
         if (isEmpty())
         {
             insertAtStart(val);
             return;
         }
 
+        node<T>* newNode = new node<T>(val);
         tail->nextNode = newNode;
         newNode->previousNode = tail;
         tail = newNode;
-
         length++;
     }
 
     void insertAtPosition(int n, T val)
     {
-        node<T>* newNode = new node<T>(val);
-        if (isEmpty() || n > length)
+        if (n < 1 || n > length + 1)
         {
             cout << "Invalid position" << endl;
             return;
@@ -121,12 +91,13 @@ class doublyLinked
             insertAtStart(val);
             return;
         }
-        if (n == length)
+        if (n == length + 1)
         {
             insertAtEnd(val);
             return;
         }
 
+        node<T>* newNode = new node<T>(val);
         node<T>* temp = head;
 
         for (int i = 1; i < n - 1; i++)
@@ -135,101 +106,81 @@ class doublyLinked
         }
         newNode->nextNode = temp->nextNode;
         newNode->previousNode = temp;
+        temp->nextNode->previousNode = newNode;
         temp->nextNode = newNode;
-        newNode->nextNode->previousNode = newNode;
-
         length++;
     }
 
     void deleteFromStart()
     {
-        //for empty list
         if (isEmpty())
         {
-            cout << "the list is empty" << endl;
+            cout << "The list is empty" << endl;
             return;
         }
-        //for single element list
-        if (head == tail)
-        {
-            delete head;
-            head = nullptr;
-            tail = nullptr;
-            length--;
-            return;
-        }
-        //for multiple element list
+
         node<T>* temp = head;
         head = head->nextNode;
+        if (head)
+            head->previousNode = nullptr;
+        else
+            tail = nullptr;
         delete temp;
         length--;
     }
 
     void deleteFromEnd()
     {
-        //for empty list
         if (isEmpty())
         {
-            cout << "the list is empty" << endl;
+            cout << "The list is empty" << endl;
             return;
         }
-        //for single element list
-        if (head == tail)
-        {
-            delete head;
-            head = nullptr;
-            tail = nullptr;
-            length--;
-            return;
-        }
-        //for multiple element list
+
         node<T>* temp = tail;
         tail = tail->previousNode;
-        tail->nextNode = nullptr;
+        if (tail)
+            tail->nextNode = nullptr;
+        else
+            head = nullptr;
         delete temp;
         length--;
     }
 
     void deleteFromPosition(int n)
     {
-        //for single element list
-        if (head == tail)
-        {
-            delete head;
-            head = nullptr;
-            tail = nullptr;
-            length--;
-            return;
-        }
-        //for multiple element list
-        if (isEmpty() || n > length)
+        if (n < 1 || n > length)
         {
             cout << "Invalid position" << endl;
-            length--;
+            return;
+        }
+        if (n == 1)
+        {
+            deleteFromStart();
+            return;
+        }
+        if (n == length)
+        {
+            deleteFromEnd();
             return;
         }
 
-        //delete node at position n
         node<T>* temp = head;
-        for (int i = 0; i < n - 2; i++)
+        for (int i = 1; i < n; i++)
         {
             temp = temp->nextNode;
         }
-        node<T>* temp2 = temp->nextNode;
-        temp->nextNode = temp2->nextNode;
-        (temp2->nextNode)->previousNode = temp;
-        delete temp2;
-
+        temp->previousNode->nextNode = temp->nextNode;
+        temp->nextNode->previousNode = temp->previousNode;
+        delete temp;
         length--;
     }
 
-    void forwardDisplay()
+    void forwardDisplay() const
     {
         node<T>* temp = head;
-
         cout << "\nForward Display: " << endl;
         cout << "There are " << length << " elements in the list" << endl;
-
         while (temp)
         {
             cout << temp->data << " ";
@@ -237,13 +188,11 @@ class doublyLinked
         }
     }
 
-    void backwardDisplay()
+    void backwardDisplay() const
     {
         node<T>* temp = tail;
-
         cout << "\nBackward Display: " << endl;
         cout << "There are " << length << " elements in the list" << endl;
-
         while (temp)
         {
             cout << temp->data << " ";
@@ -251,10 +200,7 @@ class doublyLinked
         }
     }
 
-    bool isEmpty()
-    {
-        return head == nullptr;
-    }
+    bool isEmpty() const { return head == nullptr; }
 
     ~doublyLinked()
     {
@@ -265,46 +211,27 @@ class doublyLinked
     }
 };
 
-// Static queue class for managing history
 template <class T>
 class staticQueue
 {
-    T* arr;
+    vector<T> arr;
     int front, rear, capacity, length;
 
-    public:
-    staticQueue(int size = 0) : capacity(size), front(0), rear(-1), length(0)
+public:
+    staticQueue(int size = 5) : capacity(size), front(0), rear(-1), length(0)
     {
-        arr = new T[capacity];
-    }
-
-    staticQueue(staticQueue& sq)
-    {
-        capacity = sq.capacity;
-        arr = new T[capacity];
-        for (int i = 0; i < length; i++)
-        {
-            enqueue(sq.arr[i]);
-        }
-        front = sq.front;
-        rear = sq.rear;
-        length = sq.length;
-    }
-
-    ~staticQueue()
-    {
-        delete[] arr;
+        arr.resize(capacity);
     }
 
     void enqueue(T data)
     {
         if (isFull())
         {
-            dequeue(); // Remove the oldest element if the queue is full
+            dequeue();
         }
         rear = (rear + 1) % capacity;
         arr[rear] = data;
-        length++;
+        if (length < capacity) length++;
     }
 
     void dequeue()
@@ -314,320 +241,216 @@ class staticQueue
         length--;
     }
 
-    T getFront()
+    T getFront() const
     {
         if (isEmpty()) throw runtime_error("Queue is empty");
         return arr[front];
     }
 
-    bool isEmpty()
-    {
-        return length == 0;
-    }
+    bool isEmpty() const { return length == 0; }
+    bool isFull() const { return length == capacity; }
 
-    bool isFull()
-    {
-        return length == capacity;
-    }
-
-    void display()
+    void display() const
     {
         for (int i = 0; i < length; i++)
         {
-            cout << i+1 << ". " << arr[(front + i) % capacity] << endl;
+            cout << i + 1 << ". " << arr[(front + i) % capacity] << endl;
         }
     }
 };
 
-// Class to represent audio tracks
 class tracks
 {
     string artist;
     string name;
     int duration;
 
-    public:
+public:
     tracks(string n = "", string a = "", int d = 0) : artist(a), name(n), duration(d) {}
-    void display()
+    
+    void display() const
     {
         cout << "Name: " << name << ", Duration: " << duration << ", Artist: " << artist << endl;
     }
-    string getName()
-    {
-        return name;
-    }
+    
+    string getName() const { return name; }
 };
-ostream& operator<< (ostream& os, tracks t)
+
+ostream& operator<<(ostream& os, const tracks& t)
 {
     string name = t.getName();
     cout << "Playing " << fs::path(name).filename() << "..." << endl;
-    int size_needed = MultiByteToWideChar(CP_UTF8, 0, name.c_str(), -1, NULL, 0);
-    wstring widePath(size_needed, 0);
-    MultiByteToWideChar(CP_UTF8, 0, name.c_str(), -1, &widePath[0], size_needed);
-    PlaySoundW(widePath.c_str(), NULL, SND_FILENAME);
+    
+    // Convert string to wide string for PlaySoundW
+    wstring widePath(name.begin(), name.end());
+    PlaySoundW(widePath.c_str(), NULL, SND_FILENAME | SND_ASYNC);
     return os;
 }
 
 class playlist
 {
-    public:
     string name;
     doublyLinked<tracks> songs;
     staticQueue<string> history;
 
-    playlist(string n = "") : name(n), history(5) {}
+    public:
+    playlist(string n = "") : name(n) {}
 
-    void insertAtTail(tracks d) {
+    void insertAtTail(const tracks& d)
+    {
         songs.insertAtEnd(d);
-        string name = d.getName();
-        string songName = fs::path(name).filename().string();
-        history.enqueue(songName);
+        history.enqueue(fs::path(d.getName()).filename().string());
     }
 
-    void deleteAtHead() {
-        songs.deleteFromStart();
-    }
+    void deleteAtHead() { songs.deleteFromStart(); }
+    void deleteAtTail() { songs.deleteFromEnd(); }
+    void deleteAtPosition(int p) { songs.deleteFromPosition(p); }
 
-    void deleteAtAnyPosition(int p) {
-        songs.deleteFromPosition(p);
-    }
+    void traverse() const { songs.forwardDisplay(); }
 
-    void deleteAtTail() {
-        songs.deleteFromEnd();
-    }
-
-    void traverse() {
-        songs.forwardDisplay();
-    }
-
-    void shuffle() {
-        // Create a vector of the playlist's nodes
-        std::vector<node<tracks>*> nodes;
+    void shuffle() const
+    {
+        vector<node<tracks>*> nodes;
         node<tracks>* temp = songs.getHead();
-        while (temp != nullptr) {
+        while (temp)
+        {
             nodes.push_back(temp);
             temp = temp->nextNode;
         }
-        
-        // Shuffle the vector
-        std::random_device rd;  // a randm seed for the generator
-        std::mt19937 gen(rd()); // a random number generator
-        std::shuffle(nodes.begin(), nodes.end(), gen); // shuffle using the random generated number
 
-        // Traverse the shuffled vector
-        for (node<tracks>* node : nodes) {
-            cout << "Playing: " << fs::path(node->data.getName().c_str()).filename() << "..." << endl;
-            int size_needed = MultiByteToWideChar(CP_UTF8, 0, node->data.getName().c_str(), -1, NULL, 0);
-            wstring widePath(size_needed, 0);
-            MultiByteToWideChar(CP_UTF8, 0, node->data.getName().c_str(), -1, &widePath[0], size_needed);
-            PlaySoundW(widePath.c_str(), NULL, SND_FILENAME);
-        }
-        cout << endl;
-    }
+        random_device rd;
+        mt19937 gen(rd());
+        std::shuffle(nodes.begin(), nodes.end(), gen);
 
-    playlist(const playlist& l)
-    {
-        songs = l.songs;
-        history = l.history;
-        name = l.name;
-    }
-
-    bool isEmpty()
-    {
-        if (songs.getTail() == nullptr)
+        for (const auto& node : nodes)
         {
-            return true;
-        }
-        else
-        {
-            return false;
+            cout << node->data;
         }
     }
 
-    string getName()
-    {
-        return name;
-    }
-
-    void DisplayHistory()
-    {
-        history.display();
-    }
+    bool isEmpty() const { return songs.isEmpty(); }
+    string getName() const { return name; }
+    void displayHistory() const { history.display(); }
 };
 
-class AudioPlayer {
-    string* songs = new string[10000]();
-    int count = 0;
-    int size = 0;
+class AudioPlayer
+{
+    vector<string> songs;
+    vector<playlist> allPlaylists;
     fs::path dirSelected;
 
     public:
-    playlist allPlaylists[5];
-    AudioPlayer() {
-        dirSelected = "C://";
-    }
+    AudioPlayer() : dirSelected("C://") {}
 
-    void listenToPlaylist(int index) {
-        if ((index < 1) || (index > 5))
+    size_t getPlaylistCount() const { return allPlaylists.size(); }
+
+    void listenToPlaylist(int index) const
+    {
+        if (index < 1 || index > static_cast<int>(allPlaylists.size()))
         {
             cout << "Invalid playlist number!" << endl;
             return;
         }
-
-        allPlaylists[index - 1].songs.forwardDisplay();
-
+        allPlaylists[index - 1].traverse();
     }
 
-    void ShuffleList()
+    void shufflePlaylist(int index) const
     {
-        allPlaylists[0].shuffle();
+        if (index < 1 || index > static_cast<int>(allPlaylists.size()))
+        {
+            cout << "Invalid playlist number!" << endl;
+            return;
+        }
+        allPlaylists[index-1].shuffle();  // Call without arguments
     }
 
-    void displayHistory()
+    void displayHistory(int index) const
     {
-        allPlaylists[0].DisplayHistory();
+        if (index < 1 || index > static_cast<int>(allPlaylists.size()))
+        {
+            cout << "Invalid playlist number!" << endl;
+            return;
+        }
+        allPlaylists[index - 1].displayHistory();
     }
 
-    int getSize() {
-        return size;
-    }
-    string* getSongs() {
-        return songs;
-    }
-    int getCount() {
-        return count;
-    }
+    playlist createPlaylist()
+    {
+        if (songs.empty())
+        {
+            cout << "No songs available to create a playlist!" << endl;
+            return playlist();
+        }
 
-    playlist createPlaylist() {
-            if (size == 0)
+        string name;
+        cout << "\nEnter name of your playlist: ";
+        cin >> name;
+
+        playlist newPlaylist(name);
+        
+        cout << "\nAvailable songs:" << endl;
+        for (size_t i = 0; i < songs.size(); i++)
+        {
+            cout << i + 1 << ". " << fs::path(songs[i]).filename() << endl;
+        }
+
+        cout << "\nEnter song numbers to add (0 to finish): ";
+        int choice;
+        while (cin >> choice && choice != 0)
+        {
+            if (choice > 0 && choice <= static_cast<int>(songs.size()))
             {
-                cout << "No songs available to create a playlist!" << endl;
-                return playlist(); // Return an empty playlist
+                newPlaylist.insertAtTail(tracks(songs[choice - 1]));
             }
-        
-            // Create new playlist
-            string name;
-            cout << "\nEnter name of your playlist: ";
-            cin >> name;
-        
-            int* songChoices = new int[10000];
-            cout << "\nWhich songs do you want to select?" << endl;
-            cout << "Enter the corresponding number. Enter -1 to stop selecting." << endl;
-        
-            // Prompt user to select songs for playlist
-            playlist p1(name);
-            for (int i = 0;; i++) {
-                cout << "Enter song number: ";
-                cin >> songChoices[i];
-        
-                if (songChoices[i] == -1) {
-                    break;
-                }
-                else if (songChoices[i] < 0 || songChoices[i] >= size) {
-                    cout << "Invalid song number. Please try again." << endl;
-                    i--;
-                }
-                else {
-                    p1.insertAtTail(tracks(songs[songChoices[i]]));
-                }
+            else
+            {
+                cout << "Invalid song number. Try again." << endl;
             }
-            allPlaylists[count] = p1;
-            count++;
-        
-            // Display playlist
-            //while (true) {
-                cout << "\nPlaylist created: " << name << endl;
-                cout << "Songs in playlist: " << endl;
-                node<tracks>* temp = p1.songs.getHead();
-                int index = 1;
-                while (temp != nullptr) {
-                    cout << index << ". " << temp->data.getName() << endl;
-                    temp = temp->nextNode;
-                    index++;
-                }
-               cout << "\nShuffling the playlist:" << endl;
-               ShuffleList();
-               cout << "\nDisplaying the history of the playlist:" << endl;
-               displayHistory();
-               cout << "\nPlaying the playlist:" << endl;
-               listenToPlaylist(1);
-
-                // Prompting user to delete songs
-                /*cout << "\nDo you want to delete any song from the playlist? (y/n): ";
-                char choice;
-                cin >> choice;
-                if (choice == 'n') {
-                    break;
-                }
-                else if (choice == 'y') {
-                    cout << "Enter song number to delete: ";
-                    int songToDelete;
-                    cin >> songToDelete;
-                    if (songToDelete < 1 || songToDelete > index - 1) {
-                        cout << "Invalid song number. Please try again." << endl;
-                    }
-                    else {
-                        p1.deleteAtAnyPosition(songToDelete - 1);
-                    }
-                }
-                else {
-                    cout << "Invalid choice. Please try again." << endl;
-                }
-            }*/
-        
-            delete[] songChoices;
-        
-            return p1;
         }
 
-    void selectDirectory() {
-        // Display dialog box to select a directory
-        TCHAR szDir[MAX_PATH];
-        BROWSEINFO bInfo = { 0 };
-        bInfo.hwndOwner = NULL;
-        bInfo.pidlRoot = NULL;
-        bInfo.pszDisplayName = szDir;
-        bInfo.ulFlags = BIF_RETURNONLYFSDIRS;
-        LPITEMIDLIST lpItem = SHBrowseForFolder(&bInfo);
+        allPlaylists.push_back(newPlaylist);
+        return newPlaylist;
+    }
 
-        if (lpItem != NULL) {
-            SHGetPathFromIDList(lpItem, szDir);
+    void selectDirectory()
+{
+    wchar_t szDir[MAX_PATH] = { 0 };
+    BROWSEINFOW bInfo = { 0 };
+    bInfo.hwndOwner = NULL;
+    bInfo.pszDisplayName = szDir;
+    bInfo.lpszTitle = L"Select a directory containing audio files";
+    bInfo.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
 
-            // If TCHAR is wchar_t, convert to std::string
-            #ifdef UNICODE
-            wstring wselectedDir(szDir);
-            string selectedDir(wselectedDir.begin(), wselectedDir.end()); // Convert wstring to string
-            #else
-            string selectedDir(szDir);
-            #endif
-            cout << "Selected Directory: " << selectedDir << endl;
-            dirSelected = selectedDir; // Update the selected directory
+    LPITEMIDLIST lpItem = SHBrowseForFolderW(&bInfo);
+    if (lpItem != NULL)
+    {
+        SHGetPathFromIDListW(lpItem, szDir);
+        dirSelected = szDir;
+        wcout << L"Selected Directory: " << szDir << endl;
+        countSongs();
+        CoTaskMemFree(lpItem);  // Added memory release
+    }
+} 
+
+    void countSongs()
+    {
+        songs.clear();
+        for (const auto& entry : fs::directory_iterator(dirSelected))
+        {
+            string ext = entry.path().extension().string();
+            transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+            if (ext == ".mp3" || ext == ".wav" || ext == ".ogg" || ext == ".flac")
+            {
+                songs.push_back(entry.path().string());
+            }
         }
     }
 
-    void countSongs() {
-        if (dirSelected.empty()) {
-            cout << "No directory selected!" << endl;
-            return; // Exit if no directory is selected
-        }
-
-        size = 0; // Reset size before counting
-        for (const auto& entry : std::filesystem::directory_iterator(dirSelected)) {
-            size++;
-        }
-
-        // Create array of file paths
-        int i = 0;
-        for (const auto& entry : std::filesystem::directory_iterator(dirSelected)) {
-            string pathStr = entry.path().string();
-            songs[i] = pathStr;
-            i++;
-        }
-    }
-
-    void showSongs() {
-        cout << "\nListing songs in directory:" << endl;
-        for (int i = 0; i < size; i++) {
+    void showSongs() const
+    {
+        cout << "\nAvailable songs:" << endl;
+        for (size_t i = 0; i < songs.size(); i++)
+        {
             cout << i + 1 << ". " << fs::path(songs[i]).filename() << endl;
         }
     }
@@ -636,79 +459,97 @@ class AudioPlayer {
 int menu()
 {
     int choice;
-    cout << "\nSelect the operation you want to perform. Press:" << endl;
+    cout << "\nAudio Player Menu:" << endl;
     cout << "1. Select directory" << endl;
     cout << "2. Create playlist" << endl;
     cout << "3. Listen to a playlist" << endl;
     cout << "4. Change directory" << endl;
-    cout << "5. Shuffle songs" << endl;
+    cout << "5. Shuffle playlist" << endl;
     cout << "6. Display history" << endl;
-    cout << "7. Exit Audio Player" << endl;
+    cout << "7. Exit" << endl;
     cout << "Your choice: ";
     cin >> choice;
-
     return choice;
 }
 
 int main()
 {
+    AudioPlayer player;
     int choice = 0;
-    AudioPlayer a;
 
-    while (choice != 7) {
-        if (a.getCount() >= 5) {
-            cout << "Maximum playlist capacity reached!" << endl;
-            break;
-        }
+    while (choice != 7)
+    {
+        choice = menu();
 
-        choice = menu(); // Ensured to return valid choice (1-7)
-
-        switch (choice) {
+        switch (choice)
+        {
         case 1:
-            a.selectDirectory();
-            a.countSongs();
-            a.showSongs();
+            player.selectDirectory();
+            player.showSongs();
             break;
 
         case 2:
-            a.createPlaylist();
+            if (player.createPlaylist().isEmpty())
+            {
+                cout << "Playlist creation failed!" << endl;
+            }
             break;
 
         case 3:
-            if (a.getCount() == 0) {
-                cout << "No playlist available! Create one now!" << endl;
-                a.createPlaylist(); // Ensure playlist creation
+            if (player.getPlaylistCount() == 0)
+            {
+                cout << "No playlists available!" << endl;
             }
-            else if (a.getCount() > 0) {
-                    a.listenToPlaylist(1);
-                }
+            else
+            {
+                int index;
+                cout << "Enter playlist number to play (1 to " << player.getPlaylistCount() << "): ";
+                cin >> index;
+                player.listenToPlaylist(index);
+            }
             break;
 
         case 4:
-            a.selectDirectory();
-            //a.allPlaylists.clear(); // Safer way to clear playlists if it's a vector
-            cout << "Directory changed! All playlists deleted." << endl;
+            player.selectDirectory();
             break;
 
         case 5:
-            a.ShuffleList();
-            cout << "Current Playlist is shuffling!" << endl;
+            if (player.getPlaylistCount() == 0)
+            {
+                cout << "No playlists available!" << endl;
+            }
+            else
+            {
+                int index;
+                cout << "Enter playlist number to shuffle (1 to " << player.getPlaylistCount() << "): ";
+                cin >> index;
+                player.shufflePlaylist(index);
+            }
             break;
 
         case 6:
-            cout << "History: " << endl;
-            a.displayHistory();
+            if (player.getPlaylistCount() == 0)
+            {
+                cout << "No playlists available!" << endl;
+            }
+            else
+            {
+                int index;
+                cout << "Enter playlist number to show history (1 to " << player.getPlaylistCount() << "): ";
+                cin >> index;
+                player.displayHistory(index);
+            }
             break;
 
         case 7:
-            cout << "Exiting program..." << endl;
-            return 0; // Directly exit instead of breaking
+            cout << "Exiting..." << endl;
+            break;
 
         default:
-            cout << "Invalid choice, try again.\n";
+            cout << "Invalid choice!" << endl;
             break;
-            }
         }
+    }
 
     return 0;
 }
