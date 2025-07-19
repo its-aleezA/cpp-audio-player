@@ -265,7 +265,7 @@ class tracks
     string name;
     int duration;
 
-public:
+    public:
     tracks(string n = "", string a = "", int d = 0) : artist(a), name(n), duration(d) {}
     
     void display() const
@@ -283,7 +283,7 @@ ostream& operator<<(ostream& os, const tracks& t)
     
     // Convert string to wide string for PlaySoundW
     wstring widePath(name.begin(), name.end());
-    PlaySoundW(widePath.c_str(), NULL, SND_FILENAME | SND_ASYNC);
+    PlaySoundW(widePath.c_str(), NULL, SND_FILENAME | SND_SYNC);
     return os;
 }
 
@@ -306,7 +306,16 @@ class playlist
     void deleteAtTail() { songs.deleteFromEnd(); }
     void deleteAtPosition(int p) { songs.deleteFromPosition(p); }
 
-    void traverse() const { songs.forwardDisplay(); }
+    void traverse() const 
+    {
+        node<tracks>* temp = songs.getHead();
+        while (temp)
+        {
+            cout << temp->data;
+            Sleep(100); // Small delay between songs
+            temp = temp->nextNode;
+        }
+    }
 
     void shuffle() const
     {
@@ -325,6 +334,8 @@ class playlist
         for (const auto& node : nodes)
         {
             cout << node->data;
+            // Add small delay to ensure clean transition
+            Sleep(100);
         }
     }
 
