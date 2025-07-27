@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Audio Player</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="directory-selector">
+                <button id="selectDirBtn"><i class="fas fa-folder-open"></i> Select Music Directory</button>
+                <input type="file" id="directoryInput" webkitdirectory directory multiple style="display: none;">
+            </div>
+            
+            <div class="playlist-section">
+                <h2>Playlists</h2>
+                <div class="playlist-controls">
+                    <button id="createPlaylistBtn"><i class="fas fa-plus"></i> Create Playlist</button>
+                </div>
+                <div id="playlistsContainer"></div>
+            </div>
+            
+            <div class="recently-played">
+                <h2>Recently Played</h2>
+                <div id="historyContainer"></div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="current-playlist">
+                <h2 id="currentPlaylistName">No Playlist Selected</h2>
+                <div id="songsContainer"></div>
+            </div>
+            
+            <div class="player-controls">
+                <div class="song-info">
+                    <img id="albumArt" src="https://via.placeholder.com/150" alt="Album Art">
+                    <div>
+                        <h3 id="currentSongTitle">No song selected</h3>
+                        <p id="currentSongArtist">-</p>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <input type="range" id="progress" value="0">
+                    <div class="time-display">
+                        <span id="currentTime">0:00</span>
+                        <span id="duration">0:00</span>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="shuffleBtn" title="Shuffle"><i class="fas fa-random"></i></button>
+                    <button id="prevBtn" title="Previous"><i class="fas fa-step-backward"></i></button>
+                    <button id="playPauseBtn" title="Play"><i class="fas fa-play"></i></button>
+                    <button id="nextBtn" title="Next"><i class="fas fa-step-forward"></i></button>
+                    <button id="repeatBtn" title="Repeat"><i class="fas fa-redo"></i></button>
+                </div>
+                
+                <div class="volume-control">
+                    <i class="fas fa-volume-up"></i>
+                    <input type="range" id="volume" min="0" max="1" step="0.01" value="0.7">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for creating playlists -->
+    <div id="playlistModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Create New Playlist</h2>
+            <input type="text" id="playlistName" placeholder="Playlist name">
+            <h3>Available Songs</h3>
+            <div id="availableSongs"></div>
+            <button id="savePlaylistBtn">Save Playlist</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
