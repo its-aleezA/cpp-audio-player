@@ -362,3 +362,30 @@ h2 {
     background-color: var(--primary-color);
     color: var(--light-color);
 }
+
+.playlist-option {
+    padding: 8px;
+    margin: 5px 0;
+    background-color: var(--secondary-color);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.playlist-option:hover {
+    background-color: #f5c6d9;
+}
+
+.playlist-option.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+#addSongsToPlaylistBtn {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
