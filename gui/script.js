@@ -390,6 +390,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const shuffleBtn = document.getElementById('shuffleBtn');
     const repeatBtn = document.getElementById('repeatBtn');
     const volume = document.getElementById('volume');
+    const albumArtInput = document.createElement('input');
+    albumArtInput.type = 'file';
+    albumArtInput.accept = 'image/*';
+    albumArtInput.style.display = 'none';
+    albumArtInput.addEventListener('change', handleAlbumArtSelect);
+    document.body.appendChild(albumArtInput);
+
+    albumArt.addEventListener('click', () => {
+        albumArtInput.click();
+    });
     
     // Event Listeners
     selectDirBtn.addEventListener('click', () => directoryInput.click());
@@ -518,21 +528,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function updatePlayerUI(song) {
         currentSongTitle.textContent = song.name;
         currentSongArtist.textContent = song.artist;
-        albumArt.src = 'https://via.placeholder.com/150'; // Replace with actual album art if available
         
         // Update active song in playlist
         const songElements = document.querySelectorAll('.song-item');
-        songElements.forEach((el, index) => {
-            if (index === player.currentSongIndex) {
-                el.classList.add('active');
-            } else {
-                el.classList.remove('active');
-            }
-        });
+        songElements.forEach(el => el.classList.remove('active'));
+        
+        if (player.currentSongIndex >= 0 && songElements[player.currentSongIndex]) {
+            songElements[player.currentSongIndex].classList.add('active');
+        }
     }
     
     function togglePlayPause() {
         player.togglePlayPause();
+        updatePlayButton(); 
     }
     
     function playPrevious() {
@@ -607,6 +615,23 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function seekAudio() {
         player.seek(progress.value);
+    }
+
+    function handleAlbumArtSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            albumArt.src = e.target.result;
+            
+            // Update current song's album art if available
+            if (player.currentPlaylist && player.currentSongIndex >= 0) {
+                const songs = player.currentPlaylist.songs.traverse();
+                songs[player.currentSongIndex].albumArt = e.target.result;
+            }
+        };
+        reader.readAsDataURL(file);
     }
     
     function formatTime(seconds) {
