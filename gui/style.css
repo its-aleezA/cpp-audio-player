@@ -340,3 +340,25 @@ h2 {
         height: calc(100vh - 300px);
     }
 }
+
+#albumArt {
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+#albumArt:hover {
+    transform: scale(1.03);
+}
+
+.controls button#playPauseBtn.active {
+    background-color: #4CAF50;
+}
+
+.song-item:hover {
+    background-color: var(--secondary-color);
+}
+
+.song-item.active {
+    background-color: var(--primary-color);
+    color: var(--light-color);
+}
