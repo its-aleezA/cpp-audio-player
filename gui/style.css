@@ -1,0 +1,342 @@
+:root {
+    --primary-color: #f53192;
+    --secondary-color: #ffe0e5;
+    --dark-color: #333;
+    --light-color: #fff;
+    --gray-color: #ccc;
+    --dark-gray: #555;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    color: var(--dark-color);
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 300px;
+    background-color: var(--light-color);
+    padding: 20px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.directory-selector {
+    margin-bottom: 20px;
+}
+
+.directory-selector button {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--primary-color);
+    color: var(--light-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.directory-selector button:hover {
+    background-color: #d42a7d;
+}
+
+.playlist-section, .recently-played {
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: var(--dark-color);
+    border-bottom: 1px solid var(--gray-color);
+    padding-bottom: 5px;
+}
+
+.playlist-controls button {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.playlist-item {
+    padding: 8px 10px;
+    margin-bottom: 5px;
+    background-color: var(--secondary-color);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.playlist-item:hover {
+    background-color: #f5c6d9;
+}
+
+.playlist-item.active {
+    background-color: var(--primary-color);
+    color: var(--light-color);
+}
+
+.current-playlist {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+#currentPlaylistName {
+    margin-bottom: 20px;
+}
+
+.song-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid var(--gray-color);
+    cursor: pointer;
+}
+
+.song-item:hover {
+    background-color: var(--secondary-color);
+}
+
+.song-item.active {
+    background-color: var(--primary-color);
+    color: var(--light-color);
+}
+
+.song-item .song-info {
+    flex: 1;
+}
+
+.song-item .song-duration {
+    color: var(--dark-gray);
+}
+
+.player-controls {
+    background-color: var(--light-color);
+    padding: 20px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.song-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.song-info img {
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+    margin-right: 15px;
+    object-fit: cover;
+}
+
+.song-info h3 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.song-info p {
+    font-size: 0.8rem;
+    color: var(--dark-gray);
+}
+
+.progress-container {
+    margin-bottom: 20px;
+}
+
+#progress {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--gray-color);
+    border-radius: 3px;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+#progress::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.time-display {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--dark-gray);
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.controls button {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    margin: 0 15px;
+    cursor: pointer;
+    color: var(--dark-color);
+    transition: color 0.3s;
+}
+
+.controls button:hover {
+    color: var(--primary-color);
+}
+
+.controls button#playPauseBtn {
+    font-size: 1.5rem;
+    background-color: var(--primary-color);
+    color: var(--light-color);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.volume-control i {
+    margin-right: 10px;
+    color: var(--dark-gray);
+}
+
+#volume {
+    width: 100px;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--gray-color);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+#volume::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: var(--light-color);
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.close {
+    color: var(--dark-gray);
+    float: right;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: var(--dark-color);
+}
+
+#availableSongs {
+    margin: 15px 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.available-song {
+    padding: 8px;
+    border-bottom: 1px solid var(--gray-color);
+    cursor: pointer;
+}
+
+.available-song:hover {
+    background-color: var(--secondary-color);
+}
+
+.available-song.selected {
+    background-color: var(--primary-color);
+    color: var(--light-color);
+}
+
+#savePlaylistBtn {
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: var(--light-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+    
+    .main-content {
+        height: calc(100vh - 300px);
+    }
+}
