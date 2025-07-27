@@ -59,6 +59,12 @@ Special thanks to **[Ibrahim Abdullah](https://github.com/Ibrahim5570)** for run
 
 ---
 
+## 📎 Acknowledgements
+
+Special thanks to [Abdul Fattah Nizamani](https://github.com/abdulfattahnizamani) whose GUI design inspired the look and feel of this project's web interface.
+
+---
+
 ## ✅ License
 
 This project is licensed under the **MIT License**.  
